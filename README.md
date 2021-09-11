@@ -17,6 +17,8 @@ You can also pass other arguments together with the ```--fsm``` flag:
 * ```--view_graph```: View output graph (default: False)
 * ```--debug```: View debug message (default: False)
 
+> The fsm2graph script was inspired by [generate-stg](https://github.com/bohzio/sis-tools/blob/master/generate-stg), a tool created by Mattia Corradi and Dalla Chiara Michele
+
 > The ```--lgate``` flag exists to be used to support logic gate graphs in the future: IT IS NOT CURRENTLY IMPLEMENTED
 >
 > If you'd like to contribute with a Pull Request, please do!
