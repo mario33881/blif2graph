@@ -2,7 +2,8 @@ __pycache__
 build
 dist
 *.egg-info
-*.pdf
-*.svg
-*.blif
-*.ini
+
+blif2graph/*.pdf
+blif2graph/*.svg
+blif2graph/*.blif
+blif2graph/*.ini

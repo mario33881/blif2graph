@@ -7,7 +7,7 @@ Generates a graph from a BLIF (SIS) file.
 This library uses argparse to parse arguments:
 
 If the ```--fsm``` flag is passed to the program the [blifparser library](https://github.com/mario33881/blifparser) 
-parses the input file and blif2graph generates an FSM graph using graphviz.
+parses the input file and blif2graph uses fsm2graph to generate an FSM graph using pygraphviz.
 
 You can also pass other arguments together with the ```--fsm``` flag:
 * ```--input```: BLIF input file path (required)
@@ -15,18 +15,47 @@ You can also pass other arguments together with the ```--fsm``` flag:
 * ```--output```: Output file path (no extension)
 * ```--format```: Set output graph format (default: svg)
 * ```--view_graph```: View output graph (default: False)
-* ```--debug```: View debug message (default: False)
+* ```--debug```: View debug messages (default: False)
+* ```--graphviz_dlls```: Path to Graphviz's DLLs.
+    > Useful when the 'DLL load failed' error is thrown (tipically thrown on Windows on non-default installations).
 
 > The fsm2graph script was inspired by [generate-stg](https://github.com/bohzio/sis-tools/blob/master/generate-stg), a tool created by Mattia Corradi and Dalla Chiara Michele
 
-> The ```--lgate``` flag exists to be used to support logic gate graphs in the future: IT IS NOT CURRENTLY IMPLEMENTED
->
-> If you'd like to contribute with a Pull Request, please do!
+Output example:
+
+<img src="assets/fsm.svg" height="1000px">
+
+> [Click here to see the input file](https://github.com/arc6-202021/lib_componenti_sis/blob/f831de9f16dacf4db13f9d9eebb335ee596c5e92/fsm/controllore.blif)
+
+If the ```--lgate``` flag is passed to the program the [blifparser library](https://github.com/mario33881/blifparser) 
+parses the input file and blif2graph uses lgate2graph to generate a graph using pygraphviz.
+
+You can also pass other arguments together with the ```--lgate``` flag:
+* ```--input```: BLIF input file path (required)
+* ```--style```: INI style config file path
+    > Currently not used
+* ```--output```: Output file path (no extension)
+* ```--format```: Set output graph format (default: svg)
+* ```--view_graph```: View output graph (default: False)
+* ```--debug```: View debug messages (default: False)
+* ```--graphviz_dlls```: Path to Graphviz's DLLs.
+    > Useful when the 'DLL load failed' error is thrown (tipically thrown on Windows on non-default installations).
+
+Output example:
+
+<img src="assets/lgate.svg">
+
+> Where:
+> * red = input
+> * blue = output
+> * black = internal connection
+
+> [Click here to see the input file](https://github.com/arc6-202021/lib_componenti_sis/blob/f831de9f16dacf4db13f9d9eebb335ee596c5e92/comparatori/comparatore4.blif)
 
 ## Requirements 
 * [python 3](https://www.python.org/)
-* [graphviz](https://graphviz.org/): creates the FSM graph
-* [graphviz python library](https://pypi.org/project/graphviz/): "connects" python to graphviz
+* [graphviz](https://graphviz.org/): creates the graphs
+* [pygraphviz python library](https://pygraphviz.github.io/): "connects" python to graphviz
 * [blifparser python library](https://pypi.org/project/blifparser/): parses BLIF files
 
 ## Installation
@@ -42,6 +71,11 @@ You can use it from the command line:
 ```bash
 # generates an FSM graph, fsm.blif input, fsmgraph.pdf output, view result using the default PDF viewer software at the end
 python3 blif2graph.py --fsm --input fsm.blif --output fsmgraph --format pdf --view_graph
+```
+
+```bash
+# generates a logic gate graph, lgate.blif input, lgategraph.pdf output, view result using the default PDF viewer software at the end
+python3 blif2graph.py --lgate --input lgate.blif --output lgategraph --format pdf --view_graph
 ```
 
 ```bash
@@ -102,6 +136,18 @@ blif2graph.main(params)
 ```
 
 ## Changelog 
+
+**WIP 2.0.0:** <br>
+
+## Features
+
+* Added lgate2graph logic: generates a graph from logic gates.
+
+## Fixes
+* Better fsm default styles
+    > Example: the background color is white instead of transparent. This is preferable when the background of a viewer application is dark (the background allows you to see the lines and text).
+* Ignore DPI setting when the output format is "svg"
+    > Before this fix the svg got cut off
 
 **2021-09-10 1.0.0:** <br>
 First commit
