@@ -37,6 +37,7 @@ def main(raw_args=None):
     parser.add_argument("--format", type=str, default="svg", help="Set output graph format")
     parser.add_argument("--view_graph", action='store_true', default=False, help="View output graph")
     parser.add_argument("--debug", action='store_true', default=False, help="View debug message")
+    parser.add_argument("--graphviz_dlls", type=str, help="Path to Graphviz's DLLs. Useful when the 'DLL load failed' error is thrown")
 
     args = parser.parse_args(raw_args)
     

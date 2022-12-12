@@ -9,8 +9,9 @@ https://github.com/bohzio/sis-tools/blob/master/generate-stg
 import argparse
 import os
 import sys
+import platform
+import subprocess
 
-import graphviz
 import blifparser.blifparser as blifparser
 
 try:
@@ -30,13 +31,11 @@ default_styles = {
         'rankdir': 'TB',           # TB: top to bottom (inverse: BT), LR: left to right (inverse: RL)
         'splines': 'true',
         'overlap': 'false',
-        'size': '8,5',
-        'bgcolor': 'transparent',  
+        'bgcolor': 'white',  
         'center': 'true',
-        'charset': 'UTF-8',
         'colorscheme': '',
         'concentrate': 'false',   # true: concentrate arrows together in one line until a certain point
-        'dpi': '96.0'
+        'dpi': '150.0'
     },
     'edges': {
         'fontsize': '16',
@@ -126,6 +125,8 @@ def make_fsm_graph(t_filepath, t_styles, t_outname="fsm", t_format="svg", t_view
     success = False
 
     try:
+        import pygraphviz  # import after os.add_dll_directory()
+
         blif_data = blifparser.BlifParser(t_filepath)
         blif = blif_data.blif
 
@@ -135,36 +136,50 @@ def make_fsm_graph(t_filepath, t_styles, t_outname="fsm", t_format="svg", t_view
                 print(problem)
 
             print("-----------")    
-            raise Exception("BLIF file is not valid. Please, fix the problems above")
+            raise Exception("BLIF file is not valid. Please, fix the problems above")        
         
-        g = graphviz.Digraph('fsm')
+        g = pygraphviz.AGraph(directed=True)
 
         reset_state = get_reset_state_name(blif.fsm)
 
         if reset_state is not None:
             if boold:
                 print("[DEBUG-FSM2GRAPH] reset state name:", reset_state)
-            g.attr('node', shape='doublecircle')
-            g.node(reset_state)
+            g.node_attr.update(shape='doublecircle')
+            g.add_node(reset_state)
 
-            g.attr('node', shape='circle')
+            g.node_attr.update(shape='circle')
             for row in blif.fsm.transtable:
                 if boold:
                     print("[DEBUG-FSM2GRAPH] ", row)
-                g.edge(row[1], row[2], label=" "+row[0]+"/"+row[3])
+                g.add_edge(row[1], row[2], label=" "+row[0]+"/"+row[3])
+
+            if t_styles["graph"] and t_format == "svg":
+                # svg format doesn't need dpi.
+                # > if dpi is set the graph gets cut off
+                t_styles["graph"].pop("dpi", "")  # second parameter (called "default") avoids KeyError when the "dpi" key doesn't exist
 
             g = apply_styles(g, t_styles)
-            g.render(filename=t_outname, format=t_format, view=t_view_graph)
+            g.draw(path=t_outname + "." + t_format, format=t_format, prog="dot")
 
-            try:
-                os.remove(t_outname)
-            except OSError:
-                print("Couldn't remove temporary file '{}', please remove it manually".format(t_outname))
+            # when requested, open the output file using its default application
+            if t_view_graph:
+                if platform.system() == 'Darwin':  # macOS
+                    subprocess.call(('open', t_outname))
+                elif platform.system() == 'Windows':    
+                    os.startfile(t_outname)
+                else:
+                    # linux variants
+                    subprocess.call(('xdg-open', t_outname))
 
             success = True
         else:
             print("Couldn't find the reset state: this probably means that the .r keyword is missing and the transition table is empty")
     
+    except ImportError as e:
+        utility.show_error(e)
+        print("\nPOSSIBLE FIX: try the --graphviz_dlls parameter.\n")
+
     except Exception as e:
         utility.show_error(e)
 
@@ -192,6 +207,7 @@ def main(raw_args=None):
     parser.add_argument("--format", type=str, default="svg", help="Set output graph format")
     parser.add_argument("--view_graph", action='store_true', default=False, help="View output graph")
     parser.add_argument("--debug", action='store_true', default=False, help="View debug message")
+    parser.add_argument("--graphviz_dlls", type=str, help="Path to Graphviz's DLLs. Useful when the 'DLL load failed' error is thrown")
 
     args = parser.parse_args(raw_args)
     print("")
@@ -205,6 +221,9 @@ def main(raw_args=None):
         boold = True
         print("[DEBUG-FSM2GRAPH] Arguments: ", args)
     
+    if args.graphviz_dlls:
+        os.add_dll_directory(args.graphviz_dlls)
+
     if not os.path.isfile(args.input):
         print("Input file doesn't exist or it is not a file")
         exit_code = 1
