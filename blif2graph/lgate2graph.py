@@ -8,6 +8,13 @@ LGATE2GRAPH: generates logic gate graph from a BLIF file.
 import argparse
 import sys
 import os
+import subprocess
+import platform
+
+import networkx as nx
+import matplotlib.pyplot as plt
+
+import blifparser.blifparser as blifparser
 
 try:
     from ._version import __version__  # noqa: F401
@@ -33,11 +40,64 @@ def make_lgate_graph(t_filepath, t_styles, t_outname="lgate", t_format="svg", t_
     :return bool success: True if the graph was created successfully
     """
     success = False
+    original_working_dir = os.path.abspath(os.getcwd())
+
     try:
-        # create the graph here
+        # go to the blif path. Useful when that file contains .search keywords
+        os.chdir(os.path.dirname(t_filepath))
+
+        # parse the input file
+        parser = blifparser.BlifParser(t_filepath)
+
+        # get networkx graph
+        graph = parser.get_graph()
+        G, longest_label, max_inputs = graph.nx_graph, graph.longest_label, graph.max_inputs
+
+        # get position that will be used to draw the nodes
+        pos = nx.nx_agraph.graphviz_layout(G, prog='dot')
+
+        # define the size of the figure depending on the number of inputs and lenght of the labels
+        plt.figure(figsize=(max_inputs * 2, longest_label * 2))
+
+        # draw the nodes
+        nx.draw(G, 
+            pos=pos, # nodes position
+            node_color=[node[0].node_color for node in G.nodes(data=True)],
+            with_labels=False,  # disable labels inside the nodes
+            arrows=True,
+            node_size=500
+        )
+
+        # place edge labels in the middle of each edge
+        nx.draw_networkx_edge_labels(G, pos, edge_labels=nx.get_edge_attributes(G, 'label'), label_pos=0.5)
+
+        # export dot format or save the figure
+        if t_format == "dot":
+            nx.nx_agraph.write_dot(G, t_outname + "." + t_format)
+        else:
+            # save the output inside the working directory in which the user called this script
+            plt.savefig(os.path.join(original_working_dir, t_outname + "." + t_format), bbox_inches='tight', format=t_format)
+
+        # when requested, open the output file using its default application
+        if t_view_graph:
+            if platform.system() == 'Darwin':  # macOS
+                subprocess.call(('open', t_outname))
+            elif platform.system() == 'Windows':    
+                os.startfile(t_outname)
+            else:
+                # linux variants
+                subprocess.call(('xdg-open', t_outname))
+
         success = True
+
+    except ImportError as e:
+        utility.show_error(e)
+        print("\nPOSSIBLE FIX: try the --graphviz_dlls parameter.\n")
+
     except Exception as e:
         utility.show_error(e)
+    finally:
+        os.chdir(original_working_dir)
     
     return success
 
@@ -55,10 +115,6 @@ def main(raw_args=None):
     exit_code = 0
     parsed_styles = default_styles
 
-    print("Sorry, currently logic gates are not supported.")
-    print("If you'd like to contribute with a Pull Request, please do!")
-
-    return 1 # remove when something is ready to test
 
     parser = argparse.ArgumentParser(prog="blif2graph --lgate")
 
@@ -69,13 +125,17 @@ def main(raw_args=None):
     parser.add_argument("--format", type=str, default="svg", help="Set output graph format")
     parser.add_argument("--view_graph", action='store_true', default=False, help="View output graph")
     parser.add_argument("--debug", action='store_true', default=False, help="View debug message")
+    parser.add_argument("--graphviz_dlls", type=str, help="Path to Graphviz's DLLs. Useful when the 'DLL load failed' error is thrown")
 
     args = parser.parse_args(raw_args)
     print("")
     
     if args.debug:
         boold = True
-    
+
+    if args.graphviz_dlls:
+        os.add_dll_directory(args.graphviz_dlls)
+
     if not os.path.isfile(args.input):
         print("Input file doesn't exist or it is not a file")
         exit_code = 1
