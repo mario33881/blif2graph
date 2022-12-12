@@ -1,9 +1,7 @@
 import os
 import setuptools
-import blif2graph._version as _version
 
-version_date = _version.__version__
-version = version_date.split(" ")[1]
+version = "2.0.0"
 
 
 def get_readme():
@@ -27,10 +25,10 @@ if __name__ == '__main__':
 
     setuptools.setup(
         install_requires=[
-            "graphviz==0.19.1",
+            "pygraphviz==1.10",
             "blifparser==2.0.0"
         ],  # dependencies
-        python_requires='>=3',
+        python_requires='>=3.7',
         packages=setuptools.find_packages(include=['blif2graph']),
 
         name='blif2graph',  # name of the PyPI-package.
