@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 LGATE2GRAPH: generates logic gate graph from a BLIF file.
-
-> Currently NOT implemented. If you'd like to contribute with a Pull Request, please do!
 """
 import argparse
 import sys
@@ -114,7 +112,6 @@ def main(raw_args=None):
     global boold
     exit_code = 0
     parsed_styles = default_styles
-
 
     parser = argparse.ArgumentParser(prog="blif2graph --lgate")
 
