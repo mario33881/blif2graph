@@ -1,0 +1,50 @@
+name: Tests
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.7', '3.8', '3.9', '3.10', '3.11']
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install graphviz
+      run: |
+        sudo apt update
+        sudo apt install graphviz -y
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4.5.0
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Test lgate graph creation
+      run: |
+        python blif2graph/blif2graph.py --lgate --input tests/comparatore16.blif && [ -f lgate.svg ] && rm lgate.svg
+        python blif2graph/blif2graph.py --lgate --input tests/controllore.blif --output controllore && [ -f controllore.svg ] && rm controllore.svg
+        python blif2graph/blif2graph.py --lgate --input tests/controllore_ottimizzato.blif --format pdf && [ -f lgate.pdf ] && rm lgate.pdf
+        python blif2graph/blif2graph.py --lgate --input tests/datapath.blif --output datapath --format pdf && [ -f datapath.pdf ] && rm datapath.pdf
+        python blif2graph/blif2graph.py --lgate --input tests/datapath.blif --output datapath --format png && [ -f datapath.png ] && rm datapath.png
+        python blif2graph/blif2graph.py --lgate --input tests/FSMD.blif --output FSMD --format dot && [ -f FSMD.dot ] && rm FSMD.dot
+
+        for file in "tests"/*; do
+          python blif2graph/blif2graph.py --lgate --input "$file"
+        done
+    
+    - name: Test FSM graph creation
+      run: |
+        python blif2graph/blif2graph.py --fsm --input tests/controllore.blif && [ -f fsm.svg ] && rm fsm.svg
+        python blif2graph/blif2graph.py --fsm --input tests/controllore.blif --output controllore && [ -f controllore.svg ] && rm controllore.svg
+        python blif2graph/blif2graph.py --fsm --input tests/controllore.blif --output controllore --format pdf && [ -f controllore.pdf ] && rm controllore.pdf
+        python blif2graph/blif2graph.py --fsm --input tests/controllore.blif --output controllore --format png && [ -f controllore.png ] && rm controllore.png
+        python blif2graph/blif2graph.py --fsm --input tests/controllore_ottimizzato.blif && [ -f fsm.svg ] && rm fsm.svg

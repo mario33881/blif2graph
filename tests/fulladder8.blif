@@ -1,0 +1,22 @@
+# SOMMATORE FULLADDER A 8 BIT
+# Esegue la somma tra Ax e Bx (e riporto in ingresso CIN).
+# Ox e' l'uscita e COUT e' il riporto in uscita
+
+.model fulladder8
+.inputs A7 A6 A5 A4 A3 A2 A1 A0 B7 B6 B5 B4 B3 B2 B1 B0 CIN 
+.outputs O7 O6 O5 O4 O3 O2 O1 O0 COUT 
+
+# Importa il sommatore fulladder a 1 bit
+.search fulladder1.blif 
+
+# usa 8 sommatori fulladder a 1 bit
+.subckt fulladder1 A=A0 B=B0 CIN=CIN O=O0 COUT=C0 
+.subckt fulladder1 A=A1 B=B1 CIN=C0 O=O1 COUT=C1 
+.subckt fulladder1 A=A2 B=B2 CIN=C1 O=O2 COUT=C2
+.subckt fulladder1 A=A3 B=B3 CIN=C2 O=O3 COUT=C3
+.subckt fulladder1 A=A4 B=B4 CIN=C3 O=O4 COUT=C4 
+.subckt fulladder1 A=A5 B=B5 CIN=C4 O=O5 COUT=C5
+.subckt fulladder1 A=A6 B=B6 CIN=C5 O=O6 COUT=C6
+.subckt fulladder1 A=A7 B=B7 CIN=C6 O=O7 COUT=COUT
+
+.end

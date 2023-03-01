@@ -1,0 +1,18 @@
+# PORTA LOGICA XNOR (complementare del OR esclusivo)
+#
+# dati in ingresso A e B uguali, restituisce O=1, altrimenti O=0
+#
+
+.model xnor
+.inputs A B
+.outputs O
+
+# A, B --( XOR )--> NOR_OUT
+.search xor.blif               # Importa la porta xor
+.subckt xor A=A B=B O=NOR_OUT  # Collega gli ingressi dello xnor a quelli dello xor
+
+# NOR_OUT --( NOT )--> O
+.search not.blif           # Importa la porta not
+.subckt not A=NOR_OUT O=O  # Collega l'uscita dello xor alla porta not
+
+.end

@@ -1,0 +1,13 @@
+# PORTA LOGICA NOT
+#
+# dato in ingresso A=0, restituisce O=1, altrimenti O=0
+#
+
+.model not
+.inputs A
+.outputs O
+
+.names A O
+0 1
+
+.end

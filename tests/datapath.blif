@@ -1,0 +1,91 @@
+# DATAPATH
+#
+# se CASH_RICHIESTO * 4 < CASH_DISPONIBILE, CASH_OK = 1 e CASH_DA_EROGARE = CASH_RICHIESTO
+# altrimenti CASH_DA_EROGARE (10 bit) = 0000000000 e CASH_OK = 0
+#
+# > Nota 1: il controllo avviene solo quando CHECK_DISPONIBILITA = 1
+#
+# > Nota 2: il warning "Warning: network `datapath', node "IGNORE" does not fanout" e' normale,
+# > appare perche' l'ultimo bit in uscita dal primo shifter a sinistra (quello che moltiplica CASH_RICHIESTO * 2)
+# > viene ignorato. Ignorarlo non porta a risultati sbagliati perche' e' sempre uguale a 0.
+
+.model datapath
+.inputs CASH_RICHIESTO9 CASH_RICHIESTO8 CASH_RICHIESTO7 CASH_RICHIESTO6 CASH_RICHIESTO5 CASH_RICHIESTO4 CASH_RICHIESTO3 CASH_RICHIESTO2 CASH_RICHIESTO1 CASH_RICHIESTO0 CASH_DISPONIBILE15 CASH_DISPONIBILE14 CASH_DISPONIBILE13 CASH_DISPONIBILE12 CASH_DISPONIBILE11 CASH_DISPONIBILE10 CASH_DISPONIBILE9 CASH_DISPONIBILE8 CASH_DISPONIBILE7 CASH_DISPONIBILE6 CASH_DISPONIBILE5 CASH_DISPONIBILE4 CASH_DISPONIBILE3 CASH_DISPONIBILE2 CASH_DISPONIBILE1 CASH_DISPONIBILE0 CHECK_DISPONIBILITA
+.outputs CASH_DA_EROGARE9 CASH_DA_EROGARE8 CASH_DA_EROGARE7 CASH_DA_EROGARE6 CASH_DA_EROGARE5 CASH_DA_EROGARE4 CASH_DA_EROGARE3 CASH_DA_EROGARE2 CASH_DA_EROGARE1 CASH_DA_EROGARE0 CASH_OK
+
+# Importa i componenti necessari
+.search mux2i10b.blif        # multiplexer 2 ingressi da 10 bit
+.search mux2i16b.blif        # multiplexer 2 ingressi da 16 bit
+.search shiftersx16b.blif    # shifter a sinistra a 16 bit
+.search minoreuguale16.blif  # minore uguale a 16 bit
+.search comparatore16.blif   # comparatore a 16 bit
+
+# costante a 0
+.names N_ZERO
+
+# aggiungi latch per attendere lo stato RICHIESTA per rispondere con CASH_OK e CASH_DA_EROGARE
+.latch CHECK_DISPONIBILITA CHECK_DISPONIBILITA_IN re NIL 0
+
+# ======================================================
+
+# -- PREPARO CASH_RICHIESTO * 4 --
+
+# multiplexer 2 ingressi 10 bit che seleziona con S=0 0000000000, altrimenti con S=1 CASH_RICHIESTO
+# il selettore S e' CHECK_DISPONIBILITA
+# uscita del multiplexer: TM2_X  (To Multiply by 2, X indica bit 0-9)
+.subckt mux2i10b S=CHECK_DISPONIBILITA_IN A9=N_ZERO A8=N_ZERO A7=N_ZERO A6=N_ZERO A5=N_ZERO A4=N_ZERO A3=N_ZERO A2=N_ZERO A1=N_ZERO A0=N_ZERO B9=CASH_RICHIESTO9 B8=CASH_RICHIESTO8 B7=CASH_RICHIESTO7 B6=CASH_RICHIESTO6 B5=CASH_RICHIESTO5 B4=CASH_RICHIESTO4 B3=CASH_RICHIESTO3 B2=CASH_RICHIESTO2 B1=CASH_RICHIESTO1 B0=CASH_RICHIESTO0 O9=TM2_9 O8=TM2_8 O7=TM2_7 O6=TM2_6 O5=TM2_5 O4=TM2_4 O3=TM2_3 O2=TM2_2 O1=TM2_1 O0=TM2_0
+
+# moltiplico per 2 TM2_X con lo shifter a sinistra da 16 bit di output, 15 bit di input 
+# (i 5 bit piu' significativi sono a 0 e gli altri 10 sono bit di CASH_RICHIESTO)
+# Uscita dello shifter: M2_X (Multiplied by 2)
+#
+# > 16 bit perche' poi occorre confrontare il risultato di CASH_RICHIESTO * 4 con CASH_DISPONIBILE
+#
+# > ignora il bit 15 (sedicesimo, nominato IGNORE) perche' sempre uguale a 0 e perche' il prossimo shifter accetta 15 bit in ingresso
+.subckt shiftersx16b A14=N_ZERO A13=N_ZERO A12=N_ZERO A11=N_ZERO A10=N_ZERO A9=TM2_9 A8=TM2_8 A7=TM2_7 A6=TM2_6 A5=TM2_5 A4=TM2_4 A3=TM2_3 A2=TM2_2 A1=TM2_1 A0=TM2_0 O15=IGNORE O14=M2_14 O13=M2_13 O12=M2_12 O11=M2_11 O10=M2_10 O9=M2_9 O8=M2_8 O7=M2_7 O6=M2_6 O5=M2_5 O4=M2_4 O3=M2_3 O2=M2_2 O1=M2_1 O0=M2_0
+
+# moltiplico per 2 M2_x con lo shifter a sinistra da 16 bit di output, 15 bit di input
+# Uscita dello shifter: M4_X (Multiplied by 4)
+#
+# > Questo e' il risultato di CASH_RICHIESTO * 4
+.subckt shiftersx16b A14=M2_14 A13=M2_13 A12=M2_12 A11=M2_11 A10=M2_10 A9=M2_9 A8=M2_8 A7=M2_7 A6=M2_6 A5=M2_5 A4=M2_4 A3=M2_3 A2=M2_2 A1=M2_1 A0=M2_0 O15=M4_15 O14=M4_14 O13=M4_13 O12=M4_12 O11=M4_11 O10=M4_10 O9=M4_9 O8=M4_8 O7=M4_7 O6=M4_6 O5=M4_5 O4=M4_4 O3=M4_3 O2=M4_2 O1=M4_1 O0=M4_0
+
+
+# ======================================================
+
+# -- LEGGO DALL'ESTERNO CASH_DISPONIBILE SOLO SE NECESSARIO --
+
+# multiplexer 2 ingressi 16 bit che seleziona con S=0 0000000000000000, altrimenti con S=1 CASH_DISPONIBILE
+# il selettore S e' CHECK_DISPONIBILITA
+# uscita del multiplexer: CDS_X  (Cash Disponibile Selezionato, X indica bit 0-15)
+.subckt mux2i16b S=CHECK_DISPONIBILITA_IN A15=N_ZERO A14=N_ZERO A13=N_ZERO A12=N_ZERO A11=N_ZERO A10=N_ZERO A9=N_ZERO A8=N_ZERO A7=N_ZERO A6=N_ZERO A5=N_ZERO A4=N_ZERO A3=N_ZERO A2=N_ZERO A1=N_ZERO A0=N_ZERO B15=CASH_DISPONIBILE15 B14=CASH_DISPONIBILE14 B13=CASH_DISPONIBILE13 B12=CASH_DISPONIBILE12 B11=CASH_DISPONIBILE11 B10=CASH_DISPONIBILE10 B9=CASH_DISPONIBILE9 B8=CASH_DISPONIBILE8 B7=CASH_DISPONIBILE7 B6=CASH_DISPONIBILE6 B5=CASH_DISPONIBILE5 B4=CASH_DISPONIBILE4 B3=CASH_DISPONIBILE3 B2=CASH_DISPONIBILE2 B1=CASH_DISPONIBILE1 B0=CASH_DISPONIBILE0 O15=CDS_15 O14=CDS_14 O13=CDS_13 O12=CDS_12 O11=CDS_11 O10=CDS_10 O9=CDS_9 O8=CDS_8 O7=CDS_7 O6=CDS_6 O5=CDS_5 O4=CDS_4 O3=CDS_3 O2=CDS_2 O1=CDS_1 O0=CDS_0
+
+
+# ======================================================
+
+# -- PREPARO CASH_OK --
+
+# verifico se CASH_RICHIESTO * 4 (M4) e' minore uguale a CASH_DISPONIBILE (CDS)
+# Uscita: M4_le_CDS (1 quando M4 <= CDS, altrimenti 0)
+.subckt minoreuguale16 C15=M4_15 C14=M4_14 C13=M4_13 C12=M4_12 C11=M4_11 C10=M4_10 C9=M4_9 C8=M4_8 C7=M4_7 C6=M4_6 C5=M4_5 C4=M4_4 C3=M4_3 C2=M4_2 C1=M4_1 C0=M4_0 D15=CDS_15 D14=CDS_14 D13=CDS_13 D12=CDS_12 D11=CDS_11 D10=CDS_10 D9=CDS_9 D8=CDS_8 D7=CDS_7 D6=CDS_6 D5=CDS_5 D4=CDS_4 D3=CDS_3 D2=CDS_2 D1=CDS_1 D0=CDS_0 CleD=M4_le_CDS
+
+# verifico se CASH_RICHIESTO * 4 (M4) e' uguale a CASH_DISPONIBILE (CDS)
+# Uscita: M4_eq_CDS (1 quando M4 == CDS, altrimenti 0)
+.subckt comparatore16 A15=M4_15 A14=M4_14 A13=M4_13 A12=M4_12 A11=M4_11 A10=M4_10 A9=M4_9 A8=M4_8 A7=M4_7 A6=M4_6 A5=M4_5 A4=M4_4 A3=M4_3 A2=M4_2 A1=M4_1 A0=M4_0 B15=CDS_15 B14=CDS_14 B13=CDS_13 B12=CDS_12 B11=CDS_11 B10=CDS_10 B9=CDS_9 B8=CDS_8 B7=CDS_7 B6=CDS_6 B5=CDS_5 B4=CDS_4 B3=CDS_3 B2=CDS_2 B1=CDS_1 B0=CDS_0 O=M4_eq_CDS
+
+# verifico che CASH_RICHIESTO * 4 (M4) e' minore a CASH_DISPONIBILE (CDS)
+# Uscita: CASH_OK (1 quando M4 < CDS, altrimenti 0)
+.names M4_le_CDS M4_eq_CDS CASH_OK
+10 1
+
+
+# ======================================================
+
+# -- SE CASH_OK = 1, MANDO IN USCITA CASH_RICHIESTO SU CASH_DA_EROGARE --
+
+# multiplexer 2 ingressi 10 bit che seleziona con S=0 0000000000, altrimenti con S=1 TM2 (che e' CASH_RICHIESTO o tutti zeri)
+# il selettore S e' CASH_OK
+# uscita del multiplexer: CASH_DA_EROGARE
+.subckt mux2i10b S=CASH_OK A9=N_ZERO A8=N_ZERO A7=N_ZERO A6=N_ZERO A5=N_ZERO A4=N_ZERO A3=N_ZERO A2=N_ZERO A1=N_ZERO A0=N_ZERO B9=TM2_9 B8=TM2_8 B7=TM2_7 B6=TM2_6 B5=TM2_5 B4=TM2_4 B3=TM2_3 B2=TM2_2 B1=TM2_1 B0=TM2_0 O9=CASH_DA_EROGARE9 O8=CASH_DA_EROGARE8 O7=CASH_DA_EROGARE7 O6=CASH_DA_EROGARE6 O5=CASH_DA_EROGARE5 O4=CASH_DA_EROGARE4 O3=CASH_DA_EROGARE3 O2=CASH_DA_EROGARE2 O1=CASH_DA_EROGARE1 O0=CASH_DA_EROGARE0
+
+.end

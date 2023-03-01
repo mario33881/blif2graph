@@ -1,0 +1,27 @@
+.model comparatore16
+.inputs A15 A14 A13 A12 A11 A10 A9 A8 A7 A6 A5 A4 A3 A2 A1 A0 B15 B14 B13 B12 B11 B10 B9 B8 B7 B6 B5 B4 B3 B2 B1 B0 
+.outputs O 
+
+# Usa porta xnor per verificare che tutti i bit sono uguali
+.search xnor.blif
+.subckt xnor A=A15 B=B15 O=X15 
+.subckt xnor A=A14 B=B14 O=X14 
+.subckt xnor A=A13 B=B13 O=X13 
+.subckt xnor A=A12 B=B12 O=X12
+.subckt xnor A=A11 B=B11 O=X11
+.subckt xnor A=A10 B=B10 O=X10 
+.subckt xnor A=A9 B=B9 O=X9 
+.subckt xnor A=A8 B=B8 O=X8 
+.subckt xnor A=A7 B=B7 O=X7 
+.subckt xnor A=A6 B=B6 O=X6 
+.subckt xnor A=A5 B=B5 O=X5 
+.subckt xnor A=A4 B=B4 O=X4
+.subckt xnor A=A3 B=B3 O=X3 
+.subckt xnor A=A2 B=B2 O=X2 
+.subckt xnor A=A1 B=B1 O=X1 
+.subckt xnor A=A0 B=B0 O=X0 
+
+.names X15 X14 X13 X12 X11 X10 X9 X8 X7 X6 X5 X4 X3 X2 X1 X0 O 
+1111111111111111 1 
+
+.end 

@@ -1,0 +1,55 @@
+# SHIFTER A SINISTRA, USCITA A 16 BIT
+
+.model shiftersx16b
+.inputs A14 A13 A12 A11 A10 A9 A8 A7 A6 A5 A4 A3 A2 A1 A0
+.outputs O15 O14 O13 O12 O11 O10 O9 O8 O7 O6 O5 O4 O3 O2 O1 O0
+
+.names A14 O15
+1 1
+
+.names A13 O14
+1 1
+
+.names A12 O13
+1 1
+
+.names A11 O12
+1 1
+
+.names A10 O11
+1 1
+
+.names A9 O10
+1 1
+
+.names A8 O9
+1 1
+
+.names A7 O8
+1 1
+
+.names A6 O7
+1 1
+
+.names A5 O6
+1 1
+
+.names A4 O5
+1 1
+
+.names A3 O4
+1 1
+
+.names A2 O3
+1 1
+
+.names A1 O2
+1 1
+
+.names A0 O1
+1 1
+
+# O0 e' sempre zero
+.names O0
+
+.end

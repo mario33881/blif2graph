@@ -1,0 +1,48 @@
+# FUNZIONE DI MAGGIORE A 16 BIT
+
+.model maggiore16
+.inputs A15 A14 A13 A12 A11 A10 A9 A8 A7 A6 A5 A4 A3 A2 A1 A0 B15 B14 B13 B12 B11 B10 B9 B8 B7 B6 B5 B4 B3 B2 B1 B0 
+.outputs AgtB 
+
+# Usa xor per vedere i bit diversi:
+# se due bit sono diversi, quel
+# dato che ha bit = 1 e' maggiore dell'altro
+
+.search xor.blif
+
+.subckt xor A=A15 B=B15 O=X15
+.subckt xor A=A14 B=B14 O=X14
+.subckt xor A=A13 B=B13 O=X13
+.subckt xor A=A12 B=B12 O=X12
+.subckt xor A=A11 B=B11 O=X11
+.subckt xor A=A10 B=B10 O=X10 
+.subckt xor A=A9 B=B9 O=X9 
+.subckt xor A=A8 B=B8 O=X8 
+.subckt xor A=A7 B=B7 O=X7 
+.subckt xor A=A6 B=B6 O=X6 
+.subckt xor A=A5 B=B5 O=X5 
+.subckt xor A=A4 B=B4 O=X4 
+.subckt xor A=A3 B=B3 O=X3 
+.subckt xor A=A2 B=B2 O=X2 
+.subckt xor A=A1 B=B1 O=X1 
+.subckt xor A=A0 B=B0 O=X0 
+
+.names A15 A14 A13 A12 A11 A10 A9 A8 A7 A6 A5 A4 A3 A2 A1 A0 X15 X14 X13 X12 X11 X10 X9 X8 X7 X6 X5 X4 X3 X2 X1 X0 AgtB 
+1---------------1--------------- 1 
+-1--------------01-------------- 1 
+--1-------------001------------- 1 
+---1------------0001------------ 1 
+----1-----------00001----------- 1 
+-----1----------000001---------- 1 
+------1---------0000001--------- 1 
+-------1--------00000001-------- 1 
+--------1-------000000001------- 1 
+---------1------0000000001------ 1 
+----------1-----00000000001----- 1 
+-----------1----000000000001---- 1 
+------------1---0000000000001--- 1 
+-------------1--00000000000001-- 1
+--------------1-000000000000001- 1
+---------------10000000000000001 1 
+ 
+.end

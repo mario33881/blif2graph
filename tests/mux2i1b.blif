@@ -1,0 +1,12 @@
+# MULTIPLEXER 2 INGRESSI DA 1 BIT CIASCUNO
+
+.model mux2i1b
+.inputs S I1 I0
+.outputs O
+
+# Quando S = 0, uscita I1, altrimenti I0
+.names S I1 I0 O
+01- 1
+1-1 1 
+
+.end

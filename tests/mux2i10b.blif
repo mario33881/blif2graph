@@ -1,0 +1,20 @@
+# MULTIPLEXER 2 INGRESSI DA 10 BIT CIASCUNO
+
+.model mux2i10b 
+.inputs S A9 A8 A7 A6 A5 A4 A3 A2 A1 A0 B9 B8 B7 B6 B5 B4 B3 B2 B1 B0
+.outputs O9 O8 O7 O6 O5 O4 O3 O2 O1 O0
+
+# Usa 10 multiplexer con 2 ingressi di 1 bit ciascuno
+.search mux2i1b.blif
+.subckt mux2i1b S=S I1=A9 I0=B9 O=O9 
+.subckt mux2i1b S=S I1=A8 I0=B8 O=O8
+.subckt mux2i1b S=S I1=A7 I0=B7 O=O7 
+.subckt mux2i1b S=S I1=A6 I0=B6 O=O6  
+.subckt mux2i1b S=S I1=A5 I0=B5 O=O5 
+.subckt mux2i1b S=S I1=A4 I0=B4 O=O4  
+.subckt mux2i1b S=S I1=A3 I0=B3 O=O3 
+.subckt mux2i1b S=S I1=A2 I0=B2 O=O2  
+.subckt mux2i1b S=S I1=A1 I0=B1 O=O1 
+.subckt mux2i1b S=S I1=A0 I0=B0 O=O0  
+
+.end 

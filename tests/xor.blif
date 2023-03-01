@@ -1,0 +1,14 @@
+# PORTA LOGICA XOR (OR esclusivo)
+#
+# dati in ingresso A=1 oppure B=1 (non entrambi), restituisce O=1, altrimenti O=0 (quando A=B)
+#
+
+.model xor
+.inputs A B
+.outputs O
+
+.names A B O
+01 1
+10 1
+
+.end

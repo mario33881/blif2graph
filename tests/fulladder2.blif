@@ -1,0 +1,16 @@
+# SOMMATORE FULLADDER A 2 BIT
+# Esegue la somma tra A1 A0 e B1 B0 (e riporto in ingresso CIN).
+# O1 O0 e' l'uscita e COUT e' il riporto in uscita
+
+.model fulladder2
+.inputs A1 A0 B1 B0 CIN 
+.outputs O1 O0 COUT 
+
+# Importa il sommatore fulladder a 1 bit
+.search fulladder1.blif 
+
+# usa due sommatori fulladder a 1 bit
+.subckt fulladder1 A=A0 B=B0 CIN=CIN O=O0 COUT=C0 
+.subckt fulladder1 A=A1 B=B1 CIN=C0 O=O1 COUT=COUT 
+
+.end
