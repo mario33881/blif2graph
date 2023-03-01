@@ -139,6 +139,9 @@ def make_fsm_graph(t_filepath, t_styles, t_outname="fsm", t_format="svg", t_view
             raise Exception("BLIF file is not valid. Please, fix the problems above")        
         
         g = pygraphviz.AGraph(directed=True)
+        if not blif.fsm.ispresent:
+            print("Couldn't find an FSM inside the input file.")
+            return False
 
         reset_state = get_reset_state_name(blif.fsm)
 
