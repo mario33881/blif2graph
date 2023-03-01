@@ -133,7 +133,11 @@ def main(raw_args=None):
         boold = True
 
     if args.graphviz_dlls:
-        os.add_dll_directory(args.graphviz_dlls)
+        if platform.python_version_tuple()[1] == "7":  # TODO: remove when py3.7 gets deprecated
+            # on python 3.7 add_dll_directory() doesn't exist
+            os.environ['PATH'] = args.graphviz_dlls + os.pathsep + os.environ['PATH']
+        else:
+            os.add_dll_directory(args.graphviz_dlls)
 
     if not os.path.isfile(args.input):
         print("Input file doesn't exist or it is not a file")
