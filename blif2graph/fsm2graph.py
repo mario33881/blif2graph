@@ -69,14 +69,14 @@ def apply_styles(t_graph, t_styles):
     nodes and edges of the <t_graph> graph.
 
     Example:
-    >>> g = graphviz.Digraph('fsm')
+    >>> g = pygraphviz.AGraph(directed=True)
     >>> # add nodes to g
     >>> styles = {"graph": {"fontsize": "18"}, "nodes": {"fonsize": "12"}}
     >>> g = apply_styles(g, styles)
 
-    :param t_graph: graphviz graph
+    :param t_graph: pygraphviz graph
     :param dict t_styles: dictionary with custom styles
-    :return t_graph: graphviz graph with custom styles
+    :return t_graph: pygraphviz graph with custom styles
     """
     if 'graph' in t_styles and t_styles['graph']:
         t_graph.graph_attr.update(t_styles['graph'])

@@ -54,7 +54,9 @@ Output example:
 
 ## Requirements 
 * [python 3](https://www.python.org/)
+    > Python 3.7 and above are currently supported
 * [graphviz](https://graphviz.org/): creates the graphs
+    > The latest version supported by pygraphviz 1.7 (the last version that supports python 3.7) is graphviz 2.50.0
 * [pygraphviz python library](https://pygraphviz.github.io/): "connects" python to graphviz
 * [blifparser python library](https://pypi.org/project/blifparser/): parses BLIF files
 
@@ -64,6 +66,12 @@ Install using pip:
 ```
 pip install blif2graph
 ```
+> On Windows you might need to install pygraphviz manually using pip with the following command:
+>
+> ```
+> pip install --global-option=build_ext --global-option="-IC:\Program Files\Graphviz\include" --global-option="-LC:\Program Files\Graphviz\lib" pygraphviz
+> ```
+> Change "C:\Program Files\Graphviz" to the appropriate path.
 
 ## Usage
 
@@ -139,11 +147,16 @@ blif2graph.main(params)
 
 **WIP 2.0.0:** <br>
 
-## Features
+### Changes
+* Dropped support for python < 3.7
+* Use pygraphviz library instead of the graphviz library
+    > pygraphviz is required by networkx which is needed to make logic gate graphs
+
+### Features
 
 * Added lgate2graph logic: generates a graph from logic gates.
 
-## Fixes
+### Fixes
 * Better fsm default styles
     > Example: the background color is white instead of transparent. This is preferable when the background of a viewer application is dark (the background allows you to see the lines and text).
 * Ignore DPI setting when the output format is "svg"
