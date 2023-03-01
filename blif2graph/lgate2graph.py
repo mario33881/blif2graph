@@ -39,13 +39,15 @@ def make_lgate_graph(t_filepath, t_styles, t_outname="lgate", t_format="svg", t_
     """
     success = False
     original_working_dir = os.path.abspath(os.getcwd())
+    output_path = os.path.join(original_working_dir, t_outname + "." + t_format)
+    input_path = os.path.abspath(t_filepath)
 
     try:
         # go to the blif path. Useful when that file contains .search keywords
-        os.chdir(os.path.dirname(t_filepath))
+        os.chdir(os.path.dirname(input_path))
 
         # parse the input file
-        parser = blifparser.BlifParser(t_filepath)
+        parser = blifparser.BlifParser(input_path)
 
         # get networkx graph
         graph = parser.get_graph()
@@ -71,20 +73,20 @@ def make_lgate_graph(t_filepath, t_styles, t_outname="lgate", t_format="svg", t_
 
         # export dot format or save the figure
         if t_format == "dot":
-            nx.nx_agraph.write_dot(G, t_outname + "." + t_format)
+            nx.nx_agraph.write_dot(G, output_path)
         else:
             # save the output inside the working directory in which the user called this script
-            plt.savefig(os.path.join(original_working_dir, t_outname + "." + t_format), bbox_inches='tight', format=t_format)
+            plt.savefig(output_path, bbox_inches='tight', format=t_format)
 
         # when requested, open the output file using its default application
         if t_view_graph:
             if platform.system() == 'Darwin':  # macOS
-                subprocess.call(('open', t_outname))
+                subprocess.call(('open', output_path))
             elif platform.system() == 'Windows':    
-                os.startfile(t_outname)
+                os.startfile(output_path)
             else:
                 # linux variants
-                subprocess.call(('xdg-open', t_outname))
+                subprocess.call(('xdg-open', output_path))
 
         success = True
 
