@@ -143,6 +143,38 @@ params = [param for param in params.split(" ") if param.strip() != ""]
 blif2graph.main(params)
 ```
 
+On Windows, when graphviz is NOT installed in the default path, you might encounter the following error:
+```
+ImportError requires pygraphviz http://pygraphviz.github.io/
+
+Please, (if someone didn't post this error already) create a Github Issue here: 'https://github.com/mario33881/blif2graph/issues'
+to help the developer to fix the problem
+
+
+POSSIBLE FIX: try the --graphviz_dlls parameter.
+
+Something went wrong during graph creation
+```
+
+To fix this try using the ```--graphviz_dlls``` option pointing to the bin folder inside graphviz directory:
+```batch
+REM generates an FSM graph, fsm.blif input, fsmgraph.pdf output, view result using the default PDF viewer software at the end
+python3 blif2graph.py --fsm --input fsm.blif --output fsmgraph --format pdf --view_graph --graphviz_dlls "A:\Applications\Graphviz\bin"
+```
+> In this example graphviz is installed in the ```A:\Applications\Graphviz``` folder.
+
+```batch
+REM generates a logic gate graph, lgate.blif input, lgategraph.pdf output, view result using the default PDF viewer software at the end
+python3 blif2graph.py --lgate --input lgate.blif --output lgategraph --format pdf --view_graph --graphviz_dlls "A:\Applications\Graphviz\bin"
+```
+> In this example graphviz is installed in the ```A:\Applications\Graphviz``` folder.
+
+```batch
+REM generates an FSM graph, myfsm.blif input, default fsm.svg output, custom graphviz style, view result using the default SVG viewer software at the end
+python3 blif2graph.py --fsm --input myfsm.blif --style mystyles.ini --view_graph --graphviz_dlls "A:\Applications\Graphviz\bin"
+```
+> In this example graphviz is installed in the ```A:\Applications\Graphviz``` folder.
+
 ## Changelog 
 
 **WIP 2.0.0:** <br>
