@@ -29,7 +29,7 @@ if __name__ == '__main__':
             "blifparser==2.0.1"
         ],  # dependencies
         python_requires='>=3.7',
-        packages=setuptools.find_packages(include=['blif2graph']),
+        packages=setuptools.find_packages(include=['blif2graph'], exclude=("tests",)),
 
         name='blif2graph',  # name of the PyPI-package.
         version=version,    # version number
