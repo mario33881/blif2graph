@@ -94,6 +94,10 @@ def make_lgate_graph(t_filepath, t_styles, t_outname="lgate", t_format="svg", t_
         utility.show_error(e)
         print("\nPOSSIBLE FIX: try the --graphviz_dlls parameter.\n")
 
+    except FileNotFoundError as e:
+        print(e)
+        print("\nPOSSIBLE FIX: make sure that all .search-ed files are in the same directory as the input file.\n")
+
     except Exception as e:
         utility.show_error(e)
     finally:
