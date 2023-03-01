@@ -1,1 +1,2 @@
-.
+pygraphviz
+blifparser==2.0.1

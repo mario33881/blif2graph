@@ -25,7 +25,7 @@ if __name__ == '__main__':
 
     setuptools.setup(
         install_requires=[
-            "pygraphviz==1.10",
+            "pygraphviz",
             "blifparser==2.0.1"
         ],  # dependencies
         python_requires='>=3.7',
