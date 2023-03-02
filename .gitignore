@@ -7,3 +7,9 @@ blif2graph/*.pdf
 blif2graph/*.svg
 blif2graph/*.blif
 blif2graph/*.ini
+
+pyinstaller/build
+pyinstaller/dist
+pyinstaller/third-party
+pyinstaller/brief_licenses.md
+pyinstaller/licenses.json
