@@ -125,12 +125,12 @@ def main(raw_args=None):
         if args.debug:
             print("[DEBUG-BLIF2GRAPH] User wants to create an fsm graph")
 
-        fsm2graph.main(raw_args)
+        exit_code = fsm2graph.main(raw_args)
     else:
         if args.debug:
             print("[DEBUG-BLIF2GRAPH] User wants to create a logic gate graph")
 
-        lgate2graph.main(raw_args)
+        exit_code = lgate2graph.main(raw_args)
 
     return exit_code
 
