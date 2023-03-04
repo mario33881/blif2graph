@@ -24,6 +24,9 @@ def resource_exists(t_url):
     return res.getcode() == 200
 
 
+original_cwd = os.path.abspath(os.getcwd())
+script_dir = os.path.dirname(os.path.realpath(__file__))
+
 known_packages = [  # package name and license URL
     ("pygraphviz", "https://raw.githubusercontent.com/pygraphviz/pygraphviz/main/LICENSE")
 ]
@@ -41,6 +44,8 @@ possible_license_url_combinations = [  # URL structure
 
 
 if __name__ == "__main__":
+
+    os.chdir(script_dir)
 
     retcode = subprocess.call(
         [
@@ -154,3 +159,5 @@ if __name__ == "__main__":
             f.write("| PyInstaller       | ------- | GPL 2.0 (exception on output bundles)              | https://github.com/pyinstaller/pyinstaller |\n")
 
         print("WARNING: Remember to share the license of your software")
+
+    os.chdir(original_cwd)
