@@ -47,15 +47,18 @@ if __name__ == "__main__":
 
     os.chdir(script_dir)
 
+    brief_license_path = os.path.join(script_dir, "brief_licenses.md")
+    licenses_path = os.path.join(script_dir, "licenses.json")
+    dest_folder = os.path.join(script_dir, "third-party")
+
     retcode = subprocess.call(
         [
             "pip-licenses",
             "--from=mixed",
             "--format=markdown",
             "--with-urls",
-            "--output-file=brief_licenses.md"
-        ],
-        shell=True
+            "--output-file={}".format(brief_license_path)
+        ]
     )
 
     if retcode != 0:
@@ -72,28 +75,26 @@ if __name__ == "__main__":
             "--with-license-file",
             "--no-license-path",
             "--with-notice-file",
-            "--output-file=licenses.json"
-        ],
-        shell=True
+            "--output-file={}".format(licenses_path)
+        ]
     )
 
     if retcode != 0:
         print("ERROR: Couldn't create licenses.json file using pip-licenses")
         sys.exit(retcode)
 
-    with open("licenses.json", "r") as f:
+    with open(licenses_path, "r") as f:
         licenses = json.load(f)
 
-    if not os.path.exists("third-party"):
-        os.mkdir("third-party")
+    if not os.path.exists(dest_folder):
+        os.mkdir(dest_folder)
 
     if using_pyinstaller:
-        urllib.request.urlretrieve("https://raw.githubusercontent.com/pyinstaller/pyinstaller/master/doc/license.rst", os.path.join("third-party", "PyInstaller_license.txt"))
-        urllib.request.urlretrieve("https://raw.githubusercontent.com/python/cpython/main/LICENSE", os.path.join("third-party", "CPython_license.txt"))
+        urllib.request.urlretrieve("https://raw.githubusercontent.com/pyinstaller/pyinstaller/master/doc/license.rst", os.path.join(dest_folder, "PyInstaller_license.txt"))
+        urllib.request.urlretrieve("https://raw.githubusercontent.com/python/cpython/main/LICENSE", os.path.join(dest_folder, "CPython_license.txt"))
 
     for license in licenses:
         filename = "{}-{}_license.txt".format(license["Name"], license["Version"])
-        dest_folder = "third-party"
         dest_path = os.path.join(dest_folder, filename)
 
         if license["License"] not in ["MIT License", "BSD License"]:
